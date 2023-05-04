@@ -1,0 +1,53 @@
+service: stocks-data-lambda
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - s3:PutObject
+      Resource: "*"
+
+functions:
+  stockMarketDataLambda:
+    handler: handler.lambda_handler
+    events:
+      - schedule: cron(0 10 ? * MON-FRI *)  # Schedule for Indian stock market start time (10:00 AM UTC)
+      - schedule: cron(0 14 ? * MON-FRI *)  # Schedule for US stock market start time (2:00 PM UTC)
+    environment:
+      ALERT_EMAIL: src.dasari@gmail.com
+      MAX_RETRY: 3
+      TIMEOUT: 5
+      OUTPUT_BUCKET: stocks-data-response
+      STOCKS_URL: https://twelve-data1.p.rapidapi.com/stocks
+      X_RapidAPI_Key: ced6ba70dbmsh7b98bc04212c2dap18409djsn7f8be06fbfe2
+      X_RapidAPI_Host: twelve-data1.p.rapidapi.com
+      EXCHANGE: NASDAQ
+      FORMAT: json
+    timeout: 60
+    memorySize: 128
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!.serverless/**'
+    - '!.pytest_cache/**'
+    - '!.__pychace__/**'
+    - '!.vscode/**'
+    - '!packages.json'
+    - '!packages-lock.json'
+    - '!serverless.yml'
+    - '!build/'
+    - '!.gitignore'
+    - '!requirements.txt'
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux

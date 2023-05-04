@@ -1,0 +1,14 @@
+{
+    "name": "stocks-data-lambdap",
+    "version": "1.0.0",
+    "description": "Serverless application",
+    "dependencies": {},
+    "devDependencies": {
+        "serverless": "^3.26.0",
+        "serverless-python-requirements": "6.0.0"
+    },
+    "scripts": {
+        "deploy": "sls deploy",
+        "remove": "sls remove"
+    }
+}
